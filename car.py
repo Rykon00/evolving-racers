@@ -10,6 +10,7 @@ class Car:
         self.angle = angle
         self.speed = 0.0
         self.steer = 0.0
+        self.start = (self.x, self.y, self.angle)
         
     def update(self, keys):
         # TODO: Gas/Bremse -> speed ändern
@@ -36,11 +37,29 @@ class Car:
         self.x += math.cos(self.angle) * self.speed
         self.y += math.sin(self.angle) * self.speed
     
-    def draw(self, screen):
+    def on_track(self, track):
+        for px, py in self.get_corners():
+            x, y = int(px), int(py)
+            if x < 0 or x >= track.get_width() or y < 0 or y >= track.get_height():
+                return False
+            if track.get_at((x, y))[:3] != (255, 255, 255):
+                return False
+        return True
+    
+    def reset(self):
+        self.x, self.y, self.angle = self.start
+        self.speed = 0.0
+        self.steer = 0.0
+        
+    def get_corners(self):
         corners = [(16, 8), (16, -8), (-16, -8), (-16, 8)]
         points = []
         for lx, ly in corners:
             px = self.x + lx * math.cos(self.angle) - ly * math.sin(self.angle)
             py = self.y + lx * math.sin(self.angle) + ly * math.cos(self.angle)
             points.append((px, py))
+        return points
+
+    def draw(self, screen):
+        points = self.get_corners()
         pygame.draw.polygon(screen, (220, 40, 40), points)
