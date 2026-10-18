@@ -1,4 +1,5 @@
 import pygame
+from car import Car
 
 WIDTH, HEIGHT = 1200, 800
 FPS = 60
@@ -6,9 +7,9 @@ FPS = 60
 def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    clock = pygame. time.Clock()
+    clock = pygame.time.Clock()
     running = True
-    
+    car = Car(WIDTH * 0.5, HEIGHT * 0.5)
     while running:
         # 1. Inputs
         for event in pygame.event.get():
@@ -19,6 +20,7 @@ def main():
         
         # 3. Rendering
         screen.fill((30, 30, 30))
+        car.draw(screen)
         pygame.display.flip()
         
         clock.tick(FPS)

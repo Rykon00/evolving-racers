@@ -15,5 +15,10 @@ class Car:
         pass
     
     def draw(self, screen):
-        # TODO:  Rechteck gedreht zeichnen
-        pass
+        corners = [(16, 8), (16, -8), (-16, -8), (-16, 8)]
+        points = []
+        for lx, ly in corners:
+            px = self.x + lx * math.cos(self.angle) - ly * math.sin(self.angle)
+            py = self.y + lx * math.sin(self.angle) + ly * math.cos(self.angle)
+            points.append((px, py))
+        pygame.draw.polygon(screen, (220, 40, 40), points)
