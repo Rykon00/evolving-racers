@@ -17,7 +17,7 @@ def main():
                 running = False
         
         # 2. Physik / Update
-        
+        car.update(pygame.key.get_pressed())
         # 3. Rendering
         screen.fill((30, 30, 30))
         car.draw(screen)
