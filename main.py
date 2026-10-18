@@ -9,7 +9,8 @@ def main():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
     running = True
-    car = Car(WIDTH * 0.5, HEIGHT * 0.5)
+    car = Car(130, 164)
+    track = pygame.image.load("track.png").convert()
     while running:
         # 1. Inputs
         for event in pygame.event.get():
@@ -19,7 +20,7 @@ def main():
         # 2. Physik / Update
         car.update(pygame.key.get_pressed())
         # 3. Rendering
-        screen.fill((30, 30, 30))
+        screen.blit(track, (0, 0))
         car.draw(screen)
         pygame.display.flip()
         

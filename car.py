@@ -1,12 +1,15 @@
 import math
 import pygame
 
+
+
 class Car:
     def __init__(self, x, y, angle=0.0):
         self.x = x
         self.y = y
         self.angle = angle
         self.speed = 0.0
+        self.steer = 0.0
         
     def update(self, keys):
         # TODO: Gas/Bremse -> speed ändern
@@ -14,11 +17,21 @@ class Car:
             self.speed += 0.2
         if keys[pygame.K_s]:
             self.speed -= 0.3
+        self.speed *= 0.99
+        self.speed = max(-2, min(self.speed, 6))
+        # TODO: Space bremst smooth
+        if keys[pygame.K_SPACE]:
+            self.speed *= 0.95
         # TODO: Links/Rechts -> angle ändern (nur wenn speed > 0)
+        turn_speed = 0.04
+        steer_smoothing = 0.1
+        target = 0
         if keys[pygame.K_a]:
-            self.angle -= 0.1
+            target -= 1
         if keys[pygame.K_d]:
-            self.angle += 0.1
+            target += 1
+        self.steer += (target - self.steer) * steer_smoothing
+        self.angle += self.steer * min(turn_speed * 3, turn_speed * self.speed)
         # TODO: Position aus angle und speed berechnen
         self.x += math.cos(self.angle) * self.speed
         self.y += math.sin(self.angle) * self.speed
