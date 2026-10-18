@@ -1,7 +1,7 @@
 import math
 import pygame
 
-
+SENSOR_RANGE = 200
 
 class Car:
     def __init__(self, x, y, angle=0.0):
@@ -11,6 +11,7 @@ class Car:
         self.speed = 0.0
         self.steer = 0.0
         self.start = (self.x, self.y, self.angle)
+        self.sensor_offsets = [-90, -60, -30, 0, 30, 60, 90]
         
     def update(self, keys):
         # TODO: Gas/Bremse -> speed ändern
@@ -63,3 +64,28 @@ class Car:
     def draw(self, screen):
         points = self.get_corners()
         pygame.draw.polygon(screen, (220, 40, 40), points)
+        
+    def cast_ray(self, track, ray_angle, max_dist=SENSOR_RANGE):
+        for d in range(0, max_dist):
+            x = int(self.x + math.cos(ray_angle) * d)
+            y = int(self.y + math.sin(ray_angle) * d)
+            if x < 0 or x >= track.get_width() or y < 0 or y >= track.get_height():
+                return d
+            if track.get_at((x, y))[:3] != (255, 255, 255):
+                return d
+        return SENSOR_RANGE
+    
+    def get_sensors(self, track):
+        distance = []
+        for offset in self.sensor_offsets:
+            ray_angle = self.angle + math.radians(offset)
+            distance.append(self.cast_ray(track, ray_angle) / SENSOR_RANGE)
+        return distance
+    
+    def draw_sensor(self, screen, track):
+        for offset in self.sensor_offsets:
+            ray_angle = self.angle + math.radians(offset)
+            d = self.cast_ray(track, ray_angle)
+            end_x = self.x + math.cos(ray_angle) * d
+            end_y = self.y + math.sin(ray_angle) * d
+            pygame.draw.line(screen, (255, 220, 0), (self.x, self.y), (end_x, end_y), 2)
