@@ -10,9 +10,18 @@ class Car:
         
     def update(self, keys):
         # TODO: Gas/Bremse -> speed ändern
+        if keys[pygame.K_w]:
+            self.speed += 0.2
+        if keys[pygame.K_s]:
+            self.speed -= 0.3
         # TODO: Links/Rechts -> angle ändern (nur wenn speed > 0)
+        if keys[pygame.K_a]:
+            self.angle -= 0.1
+        if keys[pygame.K_d]:
+            self.angle += 0.1
         # TODO: Position aus angle und speed berechnen
-        pass
+        self.x += math.cos(self.angle) * self.speed
+        self.y += math.sin(self.angle) * self.speed
     
     def draw(self, screen):
         corners = [(16, 8), (16, -8), (-16, -8), (-16, 8)]
