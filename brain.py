@@ -35,7 +35,3 @@ def create_network(sizes):
             biases.append(random.uniform(-1, 1))
         network.append((weights, biases))
     return network
-
-net = create_network([7, 15, 15, 4])
-print(len(net), len(net[0][0]), len(net[0][0][0]))
-print(forward([1, 0.5, 0.2, 1, 0.3, 0.8, 1], net))

@@ -13,24 +13,24 @@ class Car:
         self.start = (self.x, self.y, self.angle)
         self.sensor_offsets = [-90, -60, -30, 0, 30, 60, 90]
         
-    def update(self, keys):
+    def update(self, gas, brake, left, right, handbrake=False):
         # TODO: Gas/Bremse -> speed ändern
-        if keys[pygame.K_w]:
+        if gas:
             self.speed += 0.2
-        if keys[pygame.K_s]:
+        if brake:
             self.speed -= 0.3
         self.speed *= 0.99
-        self.speed = max(-2, min(self.speed, 6))
+        self.speed = max(0, min(self.speed, 6))
         # TODO: Space bremst smooth
-        if keys[pygame.K_SPACE]:
+        if handbrake:
             self.speed *= 0.95
         # TODO: Links/Rechts -> angle ändern (nur wenn speed > 0)
         turn_speed = 0.04
         steer_smoothing = 0.1
         target = 0
-        if keys[pygame.K_a]:
+        if left:
             target -= 1
-        if keys[pygame.K_d]:
+        if right:
             target += 1
         self.steer += (target - self.steer) * steer_smoothing
         self.angle += self.steer * min(turn_speed * 3, turn_speed * self.speed)
