@@ -35,3 +35,28 @@ def create_network(sizes):
             biases.append(random.uniform(-1, 1))
         network.append((weights, biases))
     return network
+
+def crossover(a, b):
+    child = []
+    for (weights_a, biases_a), (weights_b, biases_b) in zip(a, b):
+        weights = []
+        for row_a, row_b in zip(weights_a, weights_b):
+            row = []
+            for x, y in zip(row_a, row_b):
+                row.append(x if random.random() < 0.5 else y)
+            weights.append(row)
+        biases = []
+        for x, y in zip(biases_a, biases_b):
+            biases.append(x if random.random() < 0.5 else y)
+        child.append((weights, biases))
+    return child
+
+def mutate(network, rate=0.05, strength=0.3):
+    for weights, biases in network:
+        for row in weights:
+            for i in range(len(row)):
+                if random.random() < rate:
+                    row[i] += random.gauss(0, strength)
+        for i in range(len(biases)):
+            if random.random() < rate:
+                biases[i] += random.gauss(0, strength)

@@ -1,10 +1,11 @@
 import math
 import pygame
+from brain import create_network, forward
 
 SENSOR_RANGE = 200
 
 class Car:
-    def __init__(self, x, y, angle=0.0):
+    def __init__(self, x, y, angle=0.0, brain = None):
         self.x = x
         self.y = y
         self.angle = angle
@@ -12,6 +13,12 @@ class Car:
         self.steer = 0.0
         self.start = (self.x, self.y, self.angle)
         self.sensor_offsets = [-90, -60, -30, 0, 30, 60, 90]
+        self.brain = brain if brain is not None else create_network([7, 15, 15, 4])
+        self.alive = True
+        self.distance = 0.0
+        self.age = 0
+        self.check_x = x
+        self.check_y = y
         
     def update(self, gas, brake, left, right, handbrake=False):
         # TODO: Gas/Bremse -> speed ändern
@@ -89,3 +96,17 @@ class Car:
             end_x = self.x + math.cos(ray_angle) * d
             end_y = self.y + math.sin(ray_angle) * d
             pygame.draw.line(screen, (255, 220, 0), (self.x, self.y), (end_x, end_y), 2)
+            
+    def think(self, track):
+        out = forward(self.get_sensors(track), self.brain)
+        self.update(out[0] > 0, out[1] > 0, out[2] > 0, out[3] > 0)
+        self.distance += self.speed
+        self.age += 1
+        if self.age % 90 == 0:
+            moved = math.hypot(self.x - self.check_x, self.y - self.check_y)
+            if moved < 100:
+                self.alive = False
+            self.check_x = self.x
+            self.check_y = self.y
+        if not self.on_track(track):
+            self.alive = False
